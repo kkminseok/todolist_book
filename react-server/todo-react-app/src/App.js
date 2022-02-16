@@ -5,21 +5,58 @@ import './App.css';
 import AddTodo from "./AddTodo";
 
 class App extends React.Component{
+
+  componentDidMount(){
+    const requestOptions = {
+      method: "GET",
+      headers: {"Content-Type":"application/json"}
+    };
+    fetch("http://localhost:8080/todo",requestOptions)
+    .then((response) => response.json)
+    .then((response) =>{
+      this.setState({
+        item: response.data,
+      });
+    },
+    (error) => {
+      this.setState({
+        error,
+      })
+    }
+    )
+  }
+
   constructor(props){
     super(props);
     this.state = {
-      items : [
-        {id : "0", title: "KMS test react component by props", done:true},
-        {id : "1", title : "example data by book", done:false},
-      ]
+      items : []
     };
   }
+
+  add = (item) => {
+    const thisItems = this.state.items;
+    item.id = "ID-" + thisItems.length;
+    item.done = false;
+    thisItems.push(item);
+    this.setState({this: thisItems});
+    console.log("items : ",this.state.items);
+  }
+
+  delete = (item) => {
+    const thisItems = this.state.items;
+    console.log("Before Update Items : ", this.state.items);
+    const newItems = thisItems.filter((e) => e.id !== item.id);
+    this.setState({items: newItems} , () => {
+      console.log("Update Items : ", this.state.items);
+    })
+  }
+
   render(){
     var todoItems = this.state.items.length > 0 && (
       <Paper style={{margin:16}}>
         <List>
           {this.state.items.map((item,idx) => (
-            <Todo item = {item} key ={item.id}/>
+            <Todo item = {item} key ={item.id} delete={this.delete}/>
           ))}
         </List>
       </Paper>
@@ -29,7 +66,7 @@ class App extends React.Component{
       return (
       <div className="App">
         <Container maxWidth="md">
-          <AddTodo/>
+          <AddTodo add={this.add}/>
           <div className="TodoList">{todoItems}</div>
         </Container>
 
