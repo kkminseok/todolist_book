@@ -7,6 +7,7 @@ constructor(props){
     super(props);
     this.state =  {item : props.item, readOnly: true};
     this.delete = props.delete;
+    this.update = props.update;
     
 }
 
@@ -22,6 +23,7 @@ offReadOnlyMode = () =>{
 enterKeyEventHandler = (e) =>{
     if(e.key === "Enter"){
         this.setState({readOnly: true});
+        this.update(this.state.item);
     }
 };
 editEventHandler = (e) => {
@@ -33,6 +35,7 @@ checkboxEventHandler = (e) => {
     const thisItem = this.state.item;
     thisItem.done = !thisItem.done;
     this.setState({item: thisItem})
+    this.update(this.state.update);
 }
 
     render(){
